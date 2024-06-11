@@ -9,13 +9,18 @@ import am.itspace.authorbookrest2.mapper.UserMapper;
 import am.itspace.authorbookrest2.service.UserService;
 import am.itspace.authorbookrest2.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +30,9 @@ public class UserEndpoint {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtTokenUtil jwtTokenUtil;
+    @Value("${upload.image.path}")
+    private String uploadImagePath;
+
 
     @PostMapping
     public ResponseEntity<UserDto> register(@RequestBody CreateUserRequestDto createUserRequestDto) {
@@ -46,6 +54,27 @@ public class UserEndpoint {
                 .token(jwtTokenUtil.generateToken(user.getEmail()))
                 .userDto(userMapper.map(user))
                 .build());
+    }
+
+    @PostMapping("/image/{id}")
+    public ResponseEntity<UserDto> uploadImage(@PathVariable("id") int userId,
+                                               @RequestParam("picture") MultipartFile multipartFile) throws IOException {
+        User byId = userService.findById(userId);
+        if (byId == null) {
+            return ResponseEntity.notFound().build();
+        }
+        userService.uploadImage(byId, multipartFile);
+        return ResponseEntity.ok(userMapper.map(byId));
+    }
+
+    @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
+
+    public @ResponseBody byte[] getImage(@RequestParam("picName") String picName) throws IOException {
+        File file = new File(uploadImagePath, picName);
+        if (file.exists()) {
+            return IOUtils.toByteArray(new FileInputStream(file));
+        }
+        return null;
     }
 
 }

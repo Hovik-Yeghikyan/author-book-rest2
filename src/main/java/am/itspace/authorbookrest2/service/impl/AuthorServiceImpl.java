@@ -1,15 +1,17 @@
 package am.itspace.authorbookrest2.service.impl;
 
 import am.itspace.authorbookrest2.dto.AuthorResponseDto;
+import am.itspace.authorbookrest2.dto.PagingResponseDto;
 import am.itspace.authorbookrest2.dto.SaveAuthorDto;
 import am.itspace.authorbookrest2.entity.Author;
 import am.itspace.authorbookrest2.mapper.AuthorMapper;
 import am.itspace.authorbookrest2.repository.AuthorRepository;
 import am.itspace.authorbookrest2.service.AuthorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +30,18 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorResponseDto> getAll() {
-        List<Author> all = authorRepository.findAll();
+    public PagingResponseDto getAll(Pageable pageable) {
+        Page<Author> all = authorRepository.findAll(pageable);
         List<AuthorResponseDto> authorResponseDtos = new ArrayList<>();
-        for (Author author : all) {
+        for (Author author : all.getContent()) {
             authorResponseDtos.add(authorMapper.map(author));
         }
-        return authorResponseDtos;
+        return PagingResponseDto.builder()
+                .data(authorResponseDtos)
+                .totalElements(all.getTotalElements())
+                .size(all.getSize())
+                .page(all.getPageable().getPageNumber())
+                .build();
     }
 
     @Override

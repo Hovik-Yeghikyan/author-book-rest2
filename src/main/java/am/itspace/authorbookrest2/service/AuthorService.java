@@ -1,17 +1,15 @@
 package am.itspace.authorbookrest2.service;
 
 import am.itspace.authorbookrest2.dto.AuthorResponseDto;
+import am.itspace.authorbookrest2.dto.PagingResponseDto;
 import am.itspace.authorbookrest2.dto.SaveAuthorDto;
-import am.itspace.authorbookrest2.entity.Author;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 
 public interface AuthorService {
     AuthorResponseDto create(SaveAuthorDto author);
 
-    List<AuthorResponseDto> getAll();
+    PagingResponseDto getAll(Pageable pageable);
 
     AuthorResponseDto getById(int id);
 

@@ -34,11 +34,13 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-//                .requestMatchers("/swagger-ui/**").permitAll()
-//                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
                 .requestMatchers("/v1/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/v1/users/image/**").permitAll()
+                .requestMatchers("/v1/users/getImage/**").permitAll()
                 .requestMatchers("/v1/users/auth").permitAll()
-                .requestMatchers(HttpMethod.POST,"/v1/authors").hasAnyAuthority(UserType.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/v1/authors").hasAnyAuthority(UserType.ADMIN.name())
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
