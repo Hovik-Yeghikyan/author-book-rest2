@@ -4,10 +4,9 @@ import am.itspace.authorbookrest2.dto.BookDto;
 import am.itspace.authorbookrest2.dto.SaveBookDto;
 import am.itspace.authorbookrest2.service.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,5 +18,10 @@ public class BookEndpoint {
     @PostMapping
     public BookDto create(@RequestBody SaveBookDto saveBookDto) {
        return bookService.save(saveBookDto);
+    }
+
+    @GetMapping
+    public List<BookDto> getAll() {
+        return bookService.getAll();
     }
 }

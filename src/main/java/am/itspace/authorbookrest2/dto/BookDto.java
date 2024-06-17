@@ -15,5 +15,7 @@ public class BookDto {
     private String title;
     private String description;
     private double price;
+    private double priceUSD;
+    private double priceRUB;
     private AuthorResponseDto authorResponseDto;
 }
