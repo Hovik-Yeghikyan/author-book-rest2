@@ -2,6 +2,7 @@ package am.itspace.authorbookrest2.endpoint;
 
 import am.itspace.authorbookrest2.dto.CountryInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/countries")
 public class CountriesEndpoint {
-    private final RestTemplate restTemplate;
+    private final String X_RAPID_API_KEY = "X-Rapid-Api-Key";
+    private final String X_RAPID_API_HOST = "X-Rapid-Api-Host";
     private final String COUNTRIES_URL = "https://geography4.p.rapidapi.com/apis/geography/v1/country";
+    @Value("${rapid.api.key}")
+    private String rapidApiKey;
+    @Value("${rapid.api.host}")
+    private String rapidApiHost;
+    private final RestTemplate restTemplate;
+
 
     @GetMapping
     public ResponseEntity<List<CountryInfo>> getCountries() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("X-RapidAPI-Key", "d6f1684676mshf0cea19e6e9a00bp16268djsn8af14d6ff35f");
-        httpHeaders.add("X-RapidAPI-Host", "geography4.p.rapidapi.com");
+        httpHeaders.add(X_RAPID_API_KEY, rapidApiKey);
+        httpHeaders.add(X_RAPID_API_HOST, rapidApiHost);
 
         HttpEntity httpEntity = new HttpEntity(null, httpHeaders);
 
